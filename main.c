@@ -24,7 +24,6 @@ char token[] = TOKEN;
 char clientId[] = "d:" ORG ":" DEVICE_TYPE ":" DEVICE_ID;
 //END
 
-
 int SLEEP_MINUTES = 1; //Sleep time
 
 /////GPRS Data START
@@ -32,8 +31,6 @@ const char apn[]  = "internet.vodafone.gr";
 const char user[] = "";
 const char pass[] = "";
 //END
-
-
 
 ////General Data START
 unsigned long ATtimeOut = 10000; // How long we will give an AT command to comeplete
@@ -44,10 +41,7 @@ String Lat;
 String Lon;
 String Date;
 String Time;
-
 //END
-
-
 
 /////Libraies init START
 TinyGsm modem(SerialAT);
@@ -55,13 +49,11 @@ TinyGsmClient client(modem);
 PubSubClient mqtt(client);
 //END
 
-
 long lastReconnectAttempt = 0;
 
 void setup() {
   SerialMon.begin(9600);
   delay(10);
-
   // Set GSM module baud rate
   SerialAT.begin(9600);
 
@@ -70,12 +62,8 @@ void setup() {
   setupgps();
 
   delay(3000);
-
-
-
   // MQTT Broker setup
   mqtt.setServer(server, 1883);
-  //mqtt.setCallback(mqttCallback);
 }
 
 void loop() {
@@ -95,10 +83,6 @@ void loop() {
         SerialMon.print(Date);
         SerialMon.print("\n");
 
-
-
-
-
         flushFONA();
         SerialMon.print("End of getLocation\n");
         for(int i = 1; i < SLEEP_MINUTES; i++) {
@@ -113,12 +97,6 @@ void loop() {
     } else {
         delay(5000);
     }
-
-
-
-
-
-
 }
 
 boolean mqttConnect() {
@@ -130,23 +108,13 @@ boolean mqttConnect() {
   }
   SerialMon.println(" OK");
 
-//Publish stuff
-
 return mqtt.connected();
 
 }
 
 void publishPayLoad(){
 
-// String payload = "{";
-//payload += "d:{"myName":SIM808module,Latitude:";
-//payload += Lat;
-//payload +=",Longitude:";
-//payload +=Lon;
-//payload += "}}";
-//
  SerialMon.print("Sending payload: ");
- //SerialMon.println(buildJson());
 
  if (mqtt.publish(topic, (char*) buildJson().c_str())) {
    SerialMon.println("Publish ok");
@@ -155,8 +123,7 @@ void publishPayLoad(){
  }
 }
 
-
- String buildJson() {
+String buildJson() {
 
 const size_t bufferSize = JSON_ARRAY_SIZE(2);
 DynamicJsonBuffer jsonBuffer(bufferSize);
@@ -167,13 +134,8 @@ root["Latitude"]=Lat;
 root["Longitude"]=Lon;
 String jsonStr;
 root.printTo(jsonStr);
-//root.printTo(Serial);
    return jsonStr;
   }
-
-
-
-
 
 void mqqtConnectionEngine(){
 
@@ -195,19 +157,14 @@ void mqqtConnectionEngine(){
   }
   }
 
-
 void setupInternet(){
-   // Restart takes quite some time
-  // To skip it, call init() instead of restart()
+
   SerialMon.println("Initializing modem...");
   modem.restart();
 
   String modemInfo = modem.getModemInfo();
   SerialMon.print("Modem: ");
   SerialMon.println(modemInfo);
-
-  // Unlock your SIM card with a PIN
-  //modem.simUnlock("1234");
 
   SerialMon.print("Waiting for network...");
   if (!modem.waitForNetwork()) {
@@ -225,21 +182,15 @@ void setupInternet(){
   SerialMon.println(" OK");
   }
 
-
-
-
-
-
 //GPS FUNCTIONS
 void setupgps(){
-    String ans;
+  String ans;
 
-     SerialMon.print("get localization ");
+  SerialMon.print("get localization ");
     if(sendATCommand("AT+CGNSSEQ=RMC", ans)){ //setup for GPS for fona 808
         SerialMon.print(ans + "\n");
   }
 }
-
 
 boolean getLocation() { //all the commands to get location from gps
     //the sendATCommand sends the command to the FONA and waits until the recieves a response before continueing on.
@@ -276,20 +227,6 @@ boolean getLocation() { //all the commands to get location from gps
 
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void GPSon() { //Turn on GPS
     //the sendATCommand sends the command to the FONA and waits until the recieves a response before continueing on.
     String ans;
@@ -309,9 +246,6 @@ void GPSoff() { //all the commands to setup a GPS
         SerialMon.print(ans + "\n");
     }
 }
-
-
-
 
 boolean sendATCommand(String Command, String& ans) { //Send an AT command and wait for a response
     int complete = 0; // have we collected the whole response?
@@ -337,7 +271,6 @@ boolean sendATCommand(String Command, String& ans) { //Send an AT command and wa
 
 }
 
-
 void flushFONA() { //if there is anything is the SerialAT serial Buffer, clear it out and print it in the Serial Monitor.
     char inChar;
     while (SerialAT.available()){
@@ -346,4 +279,3 @@ void flushFONA() { //if there is anything is the SerialAT serial Buffer, clear i
         delay(20);
     }
 }
-
