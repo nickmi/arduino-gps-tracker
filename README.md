@@ -96,7 +96,7 @@ client.loop() is a function of the PubSubClient that keeps the connection alive 
 process any messages to be sent/received etc..                
 ```
 
-###Instructions
+### Instructions
 
 ```
 Step 1:
@@ -128,7 +128,7 @@ If it fails to publish to the MQTT broker provided that the above instructions a
 
 ```
 
-###Miscellaneous
+### Miscellaneous
 Arduino nano issues
 
 ```
@@ -148,7 +148,7 @@ https://cdn-shop.adafruit.com/datasheets/SIM808_Hardware+Design_V1.00.pdf
 
 
 
-##Work in progress.....
+## Work in progress.....
 <!---  
 End with an example of getting some data out of the system or using it for a little demo
 
