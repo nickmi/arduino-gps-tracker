@@ -101,7 +101,7 @@ process any messages to be sent/received etc..
 ```
 Step 1:
 Open sketch with Arduino IDE and upload it to your device.
-After the uploading is complete open the serial monitor of the Arduino IDE.
+After the uploading is complete open the serial monitor and set the baudrate (9600) of the Arduino IDE.
 There you should see the attempt of the SIM808 to connect to your GSM network.
 If it fails check that:
 
