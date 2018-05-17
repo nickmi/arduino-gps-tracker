@@ -82,16 +82,18 @@ https://console.bluemix.net/docs/services/IoT/iotplatform_task.html#iotplatform_
 MQTT connection
 
 ```
+To connect to your mqtt broker of your choice supply the following credentials.
 mqtt.setServer(server, 1883);
 mqtt.connect(clientId,authMethod,token
 
 Use IBM Watson server as mqtt server
-- - - - - - -  topic  as mqtt topic
+- - - - - - -  token  as mqtt password
                authMethod as mqtt authMethod
 
 
 Other:
-client.loop() is a function of the PubSubClient that keeps the connection alive and gives time to the client to process any messages to be sent/received etc..                
+client.loop() is a function of the PubSubClient that keeps the connection alive and gives time to the client to
+process any messages to be sent/received etc..                
 ```
 
 ###Instructions
@@ -116,10 +118,12 @@ If your GPS fails to acquire a GPS lock again check the following:
 --You are in an open area
 
 Step 3:
-If do acquire a GPS lock then the device will try to communicate with the provided MQTT broker every 10 seconds and try to publish the acquired coordinates.
+If do acquire a GPS lock then the device will try to communicate with the provided MQTT broker every 10 seconds and
+try to publish the acquired coordinates.
 If it fails to publish to the MQTT broker provided that the above instructions are met then:
 
---Check your MQTT broker credentials. The device should not have a problem publishing messages thus this is a misconfiguration issue on your side and something that you will have to find out yourself.
+--Check your MQTT broker credentials. The device should not have a problem publishing messages thus this is a
+ misconfiguration issue on your side and something that you will have to find out yourself.
 
 
 ```
@@ -130,8 +134,8 @@ Arduino nano issues
 ```
 Due to limited SRAM 2KB you will have to make sure that less than 75% is used, otherwise you WILL face unpredictable behaviour.
 Solution:
-Use EPROM for const variables
-Use Arduino board with bigger SRAM
+--Use EPROM for const variables
+--Use Arduino board with bigger SRAM
 ```
 SIM808 datasheet
 
