@@ -132,7 +132,9 @@ If it fails to publish to the MQTT broker provided that the above instructions a
 Arduino nano issues
 
 ```
-Due to limited SRAM 2KB you will have to make sure that less than 75% is used, otherwise you WILL face unpredictable behaviour.
+Due to limited SRAM 2KB you will have to make sure that less than 75% is used, otherwise you WILL face
+unpredictable behaviour.
+
 Solution:
 --Use EPROM for const variables
 --Use Arduino board with bigger SRAM
