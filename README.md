@@ -37,6 +37,8 @@ VIN -> 5V
 You will have to make sure to have common GND for the Arduino and the SIM808
 module, otherwise serial communication wont work. If you do see -1 or other
 not comprehensible messages on the serial monitor check your GND connection.
+Be aware that supplying less than 5V 2A will force the SIM808 module to shutdown
+and restart making it impossible to acquire a GPS fix and a connection to the GSM network.
 ```
 ### Configuring Software
 
@@ -45,11 +47,103 @@ GSM Connection
 To achieve a gsm connection we will be using TinyGSMClient library.
 You will have to find your sim provider APN settings and plug them like this
 
+
 const char apn[]  = "internet.vodafone.gr";
 const char user[] = "";
 const char pass[] = "";
 
 ```
+IBM Watson IoT Connection
+
+```
+To connect to the IBM Watson IoT you will need first an IBM Cloud account then you
+will have to fill your credentials as shown below.
+
+
+#define ORG "<your organization>"
+#define DEVICE_TYPE "your-device-name"
+#define DEVICE_ID "your-device-id"
+#define TOKEN "<your-authMethod>"
+
+
+const  char server[] = ORG ".messaging.internetofthings.ibmcloud.com";
+const  char topic[] = "iot-2/evt/status/fmt/json";
+const  char authMethod[] = "use-token-auth";
+char token[] = TOKEN;
+char clientId[] = "d:" ORG ":" DEVICE_TYPE ":" DEVICE_ID;
+
+
+I strongly suggest to take a look at the following documentation for further clarification:
+
+https://console.bluemix.net/docs/services/IoT/iotplatform_task.html#iotplatform_task
+
+```
+
+MQTT connection
+
+```
+mqtt.setServer(server, 1883);
+mqtt.connect(clientId,authMethod,token
+
+Use IBM Watson server as mqtt server
+- - - - - - -  topic  as mqtt topic
+               authMethod as mqtt authMethod
+
+
+Other:
+client.loop() is a function of the PubSubClient that keeps the connection alive and gives time to the client to process any messages to be sent/received etc..                
+```
+
+###Instructions
+
+```
+Step 1:
+Open sketch with Arduino IDE and upload it to your device.
+After the uploading is complete open the serial monitor of the Arduino IDE.
+There you should see the attempt of the SIM808 to connect to your GSM network.
+If it fails check that:
+
+--You have a good power supply as aforementioned
+--You have a common GND
+--You have supplied the correct APN settings
+
+Step 2:
+If you succefully connect then move your device to an open area and allow your device some time to lock GPS signal.
+If your GPS fails to acquire a GPS lock again check the following:
+
+--You have a good power supply as aforementioned
+--You have a common GND
+--You are in an open area
+
+Step 3:
+If do acquire a GPS lock then the device will try to communicate with the provided MQTT broker every 10 seconds and try to publish the acquired coordinates.
+If it fails to publish to the MQTT broker provided that the above instructions are met then:
+
+--Check your MQTT broker credentials. The device should not have a problem publishing messages thus this is a misconfiguration issue on your side and something that you will have to find out yourself.
+
+
+```
+
+###Miscellaneous
+Arduino nano issues
+
+```
+Due to limited SRAM 2KB you will have to make sure that less than 75% is used, otherwise you WILL face unpredictable behaviour.
+Solution:
+Use EPROM for const variables
+Use Arduino board with bigger SRAM
+```
+SIM808 datasheet
+
+```
+Here you will find what each command does to the SIM808 Module what the blinking lights mean etc...
+
+https://cdn-shop.adafruit.com/datasheets/SIM808_Hardware+Design_V1.00.pdf
+```
+
+
+
+
 ##Work in progress.....
 <!---  
 End with an example of getting some data out of the system or using it for a little demo
