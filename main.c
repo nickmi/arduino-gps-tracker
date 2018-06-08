@@ -4,12 +4,12 @@
 #include <SoftwareSerial.h>
 #include <ArduinoJson.h>
 
-#define FONA_RX 3 //connect to FONA RX
-#define FONA_TX 4 //connect to FONA TX
+#define FONA_RX 3 //FONA RX
+#define FONA_TX 4 //FONA TX
 #define SerialMon Serial
 SoftwareSerial SerialAT = SoftwareSerial(FONA_TX, FONA_RX); //initialize software serial
 
-/////IBM bluemix Data START
+//IBM bluemix Data
 #define ORG "<>"
 #define DEVICE_TYPE "arduino"
 #define DEVICE_ID "arduinoBoardGPS"
@@ -18,10 +18,10 @@ SoftwareSerial SerialAT = SoftwareSerial(FONA_TX, FONA_RX); //initialize softwar
 
 typedef struct GPSData {
 
-String Lat;
-String Lon;
-String Date;
-String Time;
+	String Lat;
+	String Lon;
+	String Date;
+	String Time;
 
 }GPSData ;
 
@@ -32,25 +32,21 @@ const  char topic[] = "iot-2/evt/status/fmt/json";
 const  char authMethod[] = "use-token-auth";
 char token[] = TOKEN;
 char clientId[] = "d:" ORG ":" DEVICE_TYPE ":" DEVICE_ID;
-//END
+/
 
 int SLEEP_MINUTES = 1; //Sleep time
 
-/////GPRS Data START
+//GPRS Data 
 const char apn[]  = "internet.vodafone.gr";
 const char user[] = "";
 const char pass[] = "";
-//END
 
-////General Data START
-unsigned long ATtimeOut = 10000; // How long we will give an AT command to comeplete
-//END
+unsigned long ATtimeOut = 10000; //AT timeout
 
-/////Libraies init START
+//Libraies init 
 TinyGsm modem(SerialAT);
 TinyGsmClient client(modem);
 PubSubClient mqtt(client);
-//END
 
 long lastReconnectAttempt = 0;
 
@@ -71,8 +67,7 @@ void setup()
 
 void loop() 
 {
-	if(getLocation()) { //If getLocation gets TRUE, print the rest!
-		//Print Lat/Lon Values
+	if(getLocation()) { 
 		mqtt.loop();
 		mqqtConnectionEngine();
 		mqtt.loop();
