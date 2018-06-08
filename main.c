@@ -207,14 +207,15 @@ boolean getLocation() {
 
 		if(ans.startsWith("+CGNSINF: 1,1,")) {
 			SerialMon.print("Got Location\n"); //+CGNSINF: 1,1,20161222121541.000,41.931233,2.245903,530.100,0.04,269.5,1,,1.0,
-            gpsData.Date = ans.substring(14, 22);
+            		gpsData.Date = ans.substring(14, 22);
 			SerialMon.print("Date:" + Date + "\n");
-            gpsData.Time = ans.substring(22,28);
+            		gpsData.Time = ans.substring(22,28);
 			SerialMon.print("Time:" + Time + "\n");
-            gpsData.Lat = ans.substring(33, 42);
+             		gpsData.Lat = ans.substring(33, 42);
 			SerialMon.print("Lat:" + Lat + "\n");
-            gpsData.Lon = ans.substring(43, 51);
+            		gpsData.Lon = ans.substring(43, 51);
 			SerialMon.print("Lon:" + Lon + "\n");
+			
 			return 1;
 
 		} else {  //If the response of the device is does not start with +CGNSINF: 1,1,... then do nothing
