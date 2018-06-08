@@ -18,10 +18,10 @@ SoftwareSerial SerialAT = SoftwareSerial(FONA_TX, FONA_RX); //initialize softwar
 
 typedef struct GPSData {
 
-		String Lat;
-		String Lon;
-		String Date;
-		String Time;
+String Lat;
+String Lon;
+String Date;
+String Time;
 
 }GPSData ;
 
@@ -54,10 +54,10 @@ PubSubClient mqtt(client);
 
 long lastReconnectAttempt = 0;
 
-void setup() {
+void setup() 
+{
 	SerialMon.begin(9600);
 	delay(10);
-	// Set GSM module baud rate
 	SerialAT.begin(9600);
 
 	setupInternet();
@@ -69,9 +69,8 @@ void setup() {
 	mqtt.setServer(server, 1883);
 }
 
-void loop() {
-
-
+void loop() 
+{
 	if(getLocation()) { //If getLocation gets TRUE, print the rest!
 		//Print Lat/Lon Values
 		mqtt.loop();
@@ -98,7 +97,8 @@ void loop() {
 	}
 }
 
-boolean mqttConnect() {
+boolean mqttConnect() 
+{
 	SerialMon.print("Connecting to ");
 	SerialMon.print(server);
 	if (!mqtt.connect(clientId,authMethod,token)) {
@@ -108,11 +108,10 @@ boolean mqttConnect() {
 
 	SerialMon.println(" OK");
 	return mqtt.connected();
-
 }
 
-void publishPayLoad(){
-
+void publishPayLoad()
+{
 	SerialMon.print("Sending payload: ");
 
 	if (mqtt.publish(topic, (char*) buildJson().c_str())) {
@@ -122,11 +121,10 @@ void publishPayLoad(){
 	}
 }
 
-String buildJson() {
-
+String buildJson() 
+{
 	const size_t bufferSize = JSON_ARRAY_SIZE(2);
 	DynamicJsonBuffer jsonBuffer(bufferSize);
-
 	JsonObject& root = jsonBuffer.createObject();
 
 	root["Latitude"]=gpsData.Lat;
@@ -137,8 +135,8 @@ String buildJson() {
 	return jsonStr;
 }
 
-void mqqtConnectionEngine(){
-
+void mqqtConnectionEngine()
+{
 	if (mqtt.connected()) {
 		mqtt.loop();
 		publishPayLoad();
@@ -158,8 +156,8 @@ void mqqtConnectionEngine(){
 	}
 }
 
-void setupInternet(){
-
+void setupInternet()
+{
 	SerialMon.println("Initializing modem...");
 	modem.restart();
 
@@ -173,7 +171,6 @@ void setupInternet(){
 		while (true);
 	}
 	SerialMon.println(" OK");
-
 	SerialMon.print("Connecting to ");
 	SerialMon.print(apn);
 	if (!modem.gprsConnect(apn, user, pass)) {
@@ -184,23 +181,18 @@ void setupInternet(){
 }
 
 //GPS FUNCTIONS
-void setupgps(){
+void setupgps()
+{
 	String ans;
-
 	SerialMon.print("get localization ");
 	if(sendATCommand("AT+CGNSSEQ=RMC", ans)){ //setup for GPS for fona 808
 		SerialMon.print(ans + "\n");
 	}
 }
 
-/*
- * 
- */
-
-
-boolean getLocation() {
+boolean getLocation() 
+{
 	String ans;
-
 	SerialMon.print("get localization ");
 	if(sendATCommand("AT+CGNSINF", ans)){ //turns off GPS for fona 808
 		SerialMon.print(ans + "\n");
@@ -230,36 +222,33 @@ boolean getLocation() {
 		SerialMon.print("AT command failed: " + ans + "\n");
 		return 0;
 	}
-
 }
 
-void GPSon() {
-
+void GPSon()
+{
 	String ans;
-
 	SerialMon.print("TRYING TO TURN ON GPS ");
 	if(sendATCommand("AT+CGNSPWR=1", ans)){ //Power GPS (1 - ON, 0 - OFF)
 		SerialMon.print(ans + "\n");
 	}
 }
 
-void GPSoff() {
+void GPSoff() 
+{
 	String ans;
-
 	SerialMon.print("Turn off GPS ");
 	if(sendATCommand("AT+CGNSPWR=0", ans)){ //Power GPS (1 - ON, 0 - OFF)
 		SerialMon.print(ans + "\n");
 	}
 }
 
-
-
 /*
  * Function to communicate with the
  * SIM808 module through AT commands
 */
 
-boolean sendATCommand(String Command, String& ans) {
+boolean sendATCommand(String Command, String& ans)
+{
 	int complete = 0;
 	char c;
 	String content;
@@ -269,9 +258,9 @@ boolean sendATCommand(String Command, String& ans) {
 	SerialAT.println(Command);
 	while(!complete && commandClock <= millis() + ATtimeOut) {
 		while(!SerialAT.available() && commandClock <= millis()+ATtimeOut);
-		while(SerialAT.available()) {
-			c = SerialAT.read();
-			if(c == 0x0A || c == 0x0D);
+			while(SerialAT.available()) {
+				c = SerialAT.read();
+				if(c == 0x0A || c == 0x0D);
 		}
 		Serial.print("command: '" + String(Command) + "', response: '" + content + "'\n"); //Debug
 		ans = content;
@@ -279,7 +268,6 @@ boolean sendATCommand(String Command, String& ans) {
 	}
 	if (complete ==1) return 1;
 	else return 0;
-
 }
 
 /*
@@ -287,7 +275,8 @@ boolean sendATCommand(String Command, String& ans) {
  * and print it on the console
 */
 
-void flushFONA() {
+void flushFONA()
+{
 	char inChar;
 	while (SerialAT.available()){
 		inChar = SerialAT.read();
