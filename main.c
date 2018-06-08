@@ -15,6 +15,18 @@ SoftwareSerial SerialAT = SoftwareSerial(FONA_TX, FONA_RX); //initialize softwar
 #define DEVICE_ID "arduinoBoardGPS"
 #define TOKEN "<>"
 
+
+typedef struct GPSData {
+
+		String Lat;
+		String Lon;
+		String Date;
+		String Time;
+
+}GPSData ;
+
+GPSData gpsData;
+
 const  char server[] = ORG ".messaging.internetofthings.ibmcloud.com";
 const  char topic[] = "iot-2/evt/status/fmt/json";
 const  char authMethod[] = "use-token-auth";
@@ -32,13 +44,6 @@ const char pass[] = "";
 
 ////General Data START
 unsigned long ATtimeOut = 10000; // How long we will give an AT command to comeplete
-//END
-
-////GPS data START
-String Lat;
-String Lon;
-String Date;
-String Time;
 //END
 
 /////Libraies init START
@@ -72,23 +77,19 @@ void loop() {
 		mqtt.loop();
 		mqqtConnectionEngine();
 		mqtt.loop();
-		SerialMon.print(Lat);
-		SerialMon.print(" : ");
-		SerialMon.print(Lon);
-		SerialMon.print(" at ");
-		SerialMon.print(Time);
-		SerialMon.print(" ");
-		SerialMon.print(Date);
-		SerialMon.print("\n");
+
+		SerialMon.print(gpsData.Lat,gpsData.Lon,gpsData.Date,gpsData.Lon);
 
 		flushFONA();
 		SerialMon.print("End of getLocation\n");
+
 		for(int i = 1; i < SLEEP_MINUTES; i++) {
 			delay(30000);
 			SerialMon.print("Minute:");
 			SerialMon.print(i);
 			SerialMon.print("\n");
 		}
+
 		SerialMon.print("inizializing..wait 10 seconds..\n");
 		delay(10000);
 
@@ -104,8 +105,8 @@ boolean mqttConnect() {
 		SerialMon.println(" fail");
 		return false;
 	}
-	SerialMon.println(" OK");
 
+	SerialMon.println(" OK");
 	return mqtt.connected();
 
 }
@@ -128,10 +129,11 @@ String buildJson() {
 
 	JsonObject& root = jsonBuffer.createObject();
 
-	root["Latitude"]=Lat;
-	root["Longitude"]=Lon;
+	root["Latitude"]=gpsData.Lat;
+	root["Longitude"]=gpsData.Lon;
 	String jsonStr;
 	root.printTo(jsonStr);
+
 	return jsonStr;
 }
 
@@ -146,6 +148,7 @@ void mqqtConnectionEngine(){
 	} else {
 		// Reconnect every 10 seconds
 		unsigned long t = millis();
+
 		if (t - lastReconnectAttempt > 10000L) {
 			lastReconnectAttempt = t;
 			if (mqttConnect()) {
@@ -190,8 +193,12 @@ void setupgps(){
 	}
 }
 
-boolean getLocation() { //all the commands to get location from gps
-	//the sendATCommand sends the command to the FONA and waits until the recieves a response before continueing on.
+/*
+ * 
+ */
+
+
+boolean getLocation() {
 	String ans;
 
 	SerialMon.print("get localization ");
@@ -200,13 +207,13 @@ boolean getLocation() { //all the commands to get location from gps
 
 		if(ans.startsWith("+CGNSINF: 1,1,")) {
 			SerialMon.print("Got Location\n"); //+CGNSINF: 1,1,20161222121541.000,41.931233,2.245903,530.100,0.04,269.5,1,,1.0,
-			Date = ans.substring(14, 22);
+            gpsData.Date = ans.substring(14, 22);
 			SerialMon.print("Date:" + Date + "\n");
-			Time = ans.substring(22,28);
+            gpsData.Time = ans.substring(22,28);
 			SerialMon.print("Time:" + Time + "\n");
-			Lat = ans.substring(33, 42);
+            gpsData.Lat = ans.substring(33, 42);
 			SerialMon.print("Lat:" + Lat + "\n");
-			Lon = ans.substring(43, 51);
+            gpsData.Lon = ans.substring(43, 51);
 			SerialMon.print("Lon:" + Lon + "\n");
 			return 1;
 
@@ -225,8 +232,8 @@ boolean getLocation() { //all the commands to get location from gps
 
 }
 
-void GPSon() { //Turn on GPS
-	//the sendATCommand sends the command to the FONA and waits until the recieves a response before continueing on.
+void GPSon() {
+
 	String ans;
 
 	SerialMon.print("TRYING TO TURN ON GPS ");
@@ -235,8 +242,7 @@ void GPSon() { //Turn on GPS
 	}
 }
 
-void GPSoff() { //all the commands to setup a GPS
-	//the sendATCommand sends the command to the FONA and waits until the recieves a response before continueing on.
+void GPSoff() {
 	String ans;
 
 	SerialMon.print("Turn off GPS ");
@@ -245,30 +251,42 @@ void GPSoff() { //all the commands to setup a GPS
 	}
 }
 
-boolean sendATCommand(String Command, String& ans) { //Send an AT command and wait for a response
-	int complete = 0; // have we collected the whole response?
-	char c; //capture serial stream
-	String content; //place to save serial stream
-	unsigned long commandClock = millis(); //timeout Clock
+
+
+/*
+ * Function to communicate with the
+ * SIM808 module through AT commands
+*/
+
+boolean sendATCommand(String Command, String& ans) {
+	int complete = 0;
+	char c;
+	String content;
+	unsigned long commandClock = millis();
 
 	ans = "";
-	SerialAT.println(Command); //Print Command
-	while(!complete && commandClock <= millis() + ATtimeOut) { //wait until the command is complete
-		while(!SerialAT.available() && commandClock <= millis()+ATtimeOut); //wait until the Serial Port is opened
-		while(SerialAT.available()) { //Collect the response
-			c = SerialAT.read(); //capture it
-			if(c == 0x0A || c == 0x0D); //disregard all new lines and carrige returns (makes the String matching eaiser to do)
-			else content.concat(c); //concatonate the stream into a String
+	SerialAT.println(Command);
+	while(!complete && commandClock <= millis() + ATtimeOut) {
+		while(!SerialAT.available() && commandClock <= millis()+ATtimeOut);
+		while(SerialAT.available()) {
+			c = SerialAT.read();
+			if(c == 0x0A || c == 0x0D);
 		}
 		Serial.print("command: '" + String(Command) + "', response: '" + content + "'\n"); //Debug
-		ans = content; //save the received string(content) to "ans"
-		complete = 1;  //Lable as Done.
+		ans = content;
+		complete = 1;
 	}
-	if (complete ==1) return 1; //Is it done? return a 1
-	else return 0; //otherwise don't (this will trigger if the command times out)
+	if (complete ==1) return 1;
+	else return 0;
 
 }
-void flushFONA() { //if there is anything is the SerialAT serial Buffer, clear it out and print it in the Serial Monitor.
+
+/*
+ * Flush everything from the serial
+ * and print it on the console
+*/
+
+void flushFONA() {
 	char inChar;
 	while (SerialAT.available()){
 		inChar = SerialAT.read();
