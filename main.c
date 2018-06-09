@@ -32,7 +32,7 @@ const  char topic[] = "iot-2/evt/status/fmt/json";
 const  char authMethod[] = "use-token-auth";
 char token[] = TOKEN;
 char clientId[] = "d:" ORG ":" DEVICE_TYPE ":" DEVICE_ID;
-/
+
 
 int SLEEP_MINUTES = 1; //Sleep time
 
@@ -72,7 +72,7 @@ void loop()
 		mqqtConnectionEngine();
 		mqtt.loop();
 
-		SerialMon.print(gpsData.Lat,gpsData.Lon,gpsData.Date,gpsData.Lon);
+		SerialMon.print(gpsData.Lat);
 
 		flushFONA();
 		SerialMon.print("End of getLocation\n");
@@ -194,15 +194,15 @@ boolean getLocation()
 
 		if(ans.startsWith("+CGNSINF: 1,1,")) {
 			SerialMon.print("Got Location\n"); //+CGNSINF: 1,1,20161222121541.000,41.931233,2.245903,530.100,0.04,269.5,1,,1.0,
-            		gpsData.Date = ans.substring(14, 22);
-			SerialMon.print("Date:" + Date + "\n");
-            		gpsData.Time = ans.substring(22,28);
-			SerialMon.print("Time:" + Time + "\n");
-             		gpsData.Lat = ans.substring(33, 42);
-			SerialMon.print("Lat:" + Lat + "\n");
-            		gpsData.Lon = ans.substring(43, 51);
-			SerialMon.print("Lon:" + Lon + "\n");
-			
+								gpsData.Date = ans.substring(14, 22);
+			SerialMon.print("Date:" +  gpsData.Date + "\n");
+								gpsData.Time = ans.substring(22,28);
+			SerialMon.print("Time:" + gpsData.Time + "\n");
+								gpsData.Lat = ans.substring(33, 42);
+			SerialMon.print("Lat:" + gpsData.Lat + "\n");
+								gpsData.Lon = ans.substring(43, 51);
+			SerialMon.print("Lon:" + gpsData.Lon + "\n");
+
 			return 1;
 
 		} else {  //If the response of the device is does not start with +CGNSINF: 1,1,... then do nothing
