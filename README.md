@@ -147,10 +147,6 @@ Here you will find what each command does to the SIM808 Module what the blinking
 https://cdn-shop.adafruit.com/datasheets/SIM808_Hardware+Design_V1.00.pdf
 ```
 
-
-
-
-## Work in progress.....
 <!---  
 End with an example of getting some data out of the system or using it for a little demo
 
