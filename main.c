@@ -191,7 +191,7 @@ void setupgps(){
 }
 
 boolean getLocation() { //all the commands to get location from gps
-	//the sendATCommand sends the command to the FONA and waits until the recieves a response before continueing on.
+	n.
 	String ans;
 
 	SerialMon.print("get localization ");
@@ -199,7 +199,7 @@ boolean getLocation() { //all the commands to get location from gps
 		SerialMon.print(ans + "\n");
 
 		if(ans.startsWith("+CGNSINF: 1,1,")) {
-			SerialMon.print("Got Location\n"); //+CGNSINF: 1,1,20161222121541.000,41.931233,2.245903,530.100,0.04,269.5,1,,1.0,
+			SerialMon.print("Got Location\n");
 			Date = ans.substring(14, 22);
 			SerialMon.print("Date:" + Date + "\n");
 			Time = ans.substring(22,28);
@@ -226,7 +226,6 @@ boolean getLocation() { //all the commands to get location from gps
 }
 
 void GPSon() { //Turn on GPS
-	//the sendATCommand sends the command to the FONA and waits until the recieves a response before continueing on.
 	String ans;
 
 	SerialMon.print("TRYING TO TURN ON GPS ");
@@ -236,7 +235,6 @@ void GPSon() { //Turn on GPS
 }
 
 void GPSoff() { //all the commands to setup a GPS
-	//the sendATCommand sends the command to the FONA and waits until the recieves a response before continueing on.
 	String ans;
 
 	SerialMon.print("Turn off GPS ");
@@ -246,26 +244,26 @@ void GPSoff() { //all the commands to setup a GPS
 }
 
 boolean sendATCommand(String Command, String& ans) { //Send an AT command and wait for a response
-	int complete = 0; // have we collected the whole response?
-	char c; //capture serial stream
-	String content; //place to save serial stream
-	unsigned long commandClock = millis(); //timeout Clock
+	int complete = 0; 
+	char c; 
+	String content; 
+	unsigned long commandClock = millis(); 
 
 	ans = "";
-	SerialAT.println(Command); //Print Command
-	while(!complete && commandClock <= millis() + ATtimeOut) { //wait until the command is complete
-		while(!SerialAT.available() && commandClock <= millis()+ATtimeOut); //wait until the Serial Port is opened
-		while(SerialAT.available()) { //Collect the response
-			c = SerialAT.read(); //capture it
-			if(c == 0x0A || c == 0x0D); //disregard all new lines and carrige returns (makes the String matching eaiser to do)
-			else content.concat(c); //concatonate the stream into a String
+	SerialAT.println(Command); 
+	while(!complete && commandClock <= millis() + ATtimeOut) { 
+		while(!SerialAT.available() && commandClock <= millis()+ATtimeOut);
+		while(SerialAT.available()) { 
+			c = SerialAT.read(); t
+			if(c == 0x0A || c == 0x0D); /
+			else content.concat(c); 
 		}
-		Serial.print("command: '" + String(Command) + "', response: '" + content + "'\n"); //Debug
-		ans = content; //save the received string(content) to "ans"
-		complete = 1;  //Lable as Done.
+		Serial.print("command: '" + String(Command) + "', response: '" + content + "'\n"); 
+		ans = content; 
+		complete = 1;  
 	}
-	if (complete ==1) return 1; //Is it done? return a 1
-	else return 0; //otherwise don't (this will trigger if the command times out)
+	if (complete ==1) return 1; 
+	else return 0; 
 
 }
 void flushFONA() { //if there is anything is the SerialAT serial Buffer, clear it out and print it in the Serial Monitor.
